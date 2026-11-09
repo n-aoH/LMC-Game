@@ -7,7 +7,12 @@ async function setup() {
   
   drawing = await loadImage("drawing.png")
   console.log("HOLA")
+  imageMode(CENTER)
   scaleCanvas();
+
+  pic = new Picture(drawing)
+  pic.setPosition(900, 400);
+  pictures.push(pic);
 
 }
 
@@ -33,7 +38,7 @@ function preload() {
   console.log("HII")
   pic = "HIIIi"
   drawing = loadImage("drawing.png");
-  console.log(drawing)
+  console.log(drawing);
   
   //pic = new Picture(drawing)
 }
@@ -55,25 +60,36 @@ function getAdjustedSize(x, y) {
   
 }
 
+pictures = [];
+
 class Picture {
   constructor(image) {
-    this.image = image;
-    this.x = 0;
-    this.y = 0;
-    this.anchorX = 0.5;
-    this.anchorY = 0.5;
-    this.width = 50;
-    this.height = 50;
+    self.pic = image;
+    self.x = 0;
+    self.y = 0;
+    self.tweenX = 0;
+    self.tweenY = 0;
   }
 
+  setPosition(x, y) {
+    self.x = x;
+    self.y = y;
+    self.tweenX = x;
+    self.tweenY = y;
+  }
 
+  tweenTo(x,y) {
+    self.tweenX = x;
+    self.tweenY = y;
+  }
 
-  
+  tweenPos(t) {
+    self.x = self.x + (self.tweenX - self.x) * t;
+    self.y = self.y + (self.tweenY - self.y) * t;
+  }
 
-  drawToScreen() {
-    pos = getAdjustedPos(0,0,.5,.5)
-    size = getAdjustedSize(50, 50)
-    image(this.image, pos[0], pos[1], size[0], size[1]);
+  draw() {
+    image(self.pic, self.x, self.y)
   }
 }
 
@@ -82,11 +98,16 @@ function draw() {
   noStroke()
   background(220);
   rectMode(CENTER)
-  pos = getAdjustedPos(0,0,.5,.5)
-  size = getAdjustedSize(50, 50)
   //rect(pos[0], pos[1], size[0], size[1])
   //console.log(pic)
-  image(drawing, 50, 50)
-  //console.log(drawing)
   
+  //image(drawing, 960, 540)
+  //console.log(drawing)
+
+  //console.log(pictures)
+  for (let i = 0; i < pictures.length; i++) {
+    pictures[i].tweenPos(0.1);
+    pictures[i].draw();
+    pictures[i].tweenTo(mouseX, mouseY);
+  }
 }
