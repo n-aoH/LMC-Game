@@ -1,43 +1,59 @@
-
-
 let drawing;
 let pic;
-
+let font;
+let stage;
 let titlePic
 
 async function setup() {
+  stage = 0;
+
   createCanvas(1920, 1080);
-  console.log("SETUP")
+  console.log("SETUP");
   
-  drawing = await loadImage("drawing.png")
-  console.log("HOLA")
-  imageMode(CENTER)
+  drawing = await loadImage("drawing.png");
+  console.log("HOLA");
+  imageMode(CENTER);
   scaleCanvas();
 
-  font = loadFont("SpaceGrotesk-Light.ttf");
+  font = await loadFont("SpaceGrotesk-Light.ttf");
   console.log(font);
-  //textFont(font);
+  textFont(font);
 
-  pic = new Picture(drawing)
+  pic = new Picture(drawing);
   pic.setPosition(900, 400);
-  //pictures.push(pic);
+  pic.setName("drawing");
+  //titleScreenPictures.push(pic);
 
   titlePic = new Picture(await loadImage("guis/talkAsSparrow.png"));
-  titlePic.setPosition(900,350);
-  pictures.push(titlePic);
-
-
-  
+  titlePic.setPosition(width / 2, 350);
+  titlePic.setName("titlePic");
+  titleScreenPictures.push(titlePic);
 
   signInPic = new Picture(await loadImage("guis/signIn.png"));
-  signInPic.setPosition(900,550)
-  pictures.push(signInPic)
+  signInPic.setPosition(width / 2, 550);
+  signInPic.setName("signIn");
+  titleScreenPictures.push(signInPic);
+
+  signInPicAlt = new Picture(await loadImage("guis/glowySignIn.png"));
+  signInPicAlt.setPosition(width / 2, 550);
+  signInPicAlt.setName("glowySignIn");
+  titleScreenPictures.push(signInPicAlt);
 
   linePic = new Picture(await loadImage("guis/lineGradient.png"));
-  linePic.setPosition(900,630);
-  pictures.push(linePic);
+  linePic.setPosition(width / 2, 630);
+  linePic.setName("lineGradient");
+  titleScreenPictures.push(linePic);
 
+  // main
+  chatBox = new Picture(await loadImage("guis/boxWidget.png"));
+  chatBox.setPosition(width / 2, 820);
+  chatBox.setName("chatBox");
+  mainInteractionPictures.push(chatBox);
 
+  mainInteractionHeader = new Picture(await loadImage("guis/mainInteractionHeader.png"));
+  mainInteractionHeader.setPosition(300, 100);
+  mainInteractionHeader.setName("mainInteractionHeader");
+  mainInteractionPictures.push(mainInteractionHeader);
 }
 
 // Scaling function made with chatGPT
@@ -69,31 +85,83 @@ function preload() {
 
 
 function tween(a, b, t) {
-  return a + (b - a)*t;
+  return a + (b - a) * t;
 }
 
 function getAdjustedPos(x, y, anchorX, anchorY) {
-  return [x + (anchorX * windowWidth), y + (anchorY * windowHeight)]
+  return [x + (anchorX * windowWidth), y + (anchorY * windowHeight)];
 }
 
 function getAdjustedSize(x, y) {
   let avg = (windowWidth + windowHeight) / 2;
-  avg /= 100
+  avg /= 100;
   
-  return [x * avg, y * avg]
+  return [x * avg, y * avg];
   
 }
 
-pictures = [];
+function titleScreenButtons() {
+  if (mouseX > width / 2 - 100 && mouseX < width / 2 + 100
+    && mouseY > 550 - 30 && mouseY < 550 + 30) {
+      if (mouseIsPressed) {
+        stage++;
+      }
+    // for (let i = 0; i < titleScreenPictures.length; i++) {
+    //   if (titleScreenPictures[i].name == "signIn") {
+    //     titleScreenPictures[i].setVisible(false);
+    //   }
+    //   if (titleScreenPictures[i].name == "glowySignIn") {
+    //     titleScreenPictures[i].setVisible(true);
+    //   }
+    // }
+  }
+  // for (let i = 0; i < titleScreenPictures.length; i++) {
+  //   if (titleScreenPictures[i].name == "signIn") {
+  //     titleScreenPictures[i].setVisible(true);
+  //   }
+  //   if (titleScreenPictures[i].name == "glowySignIn") {
+  //     titleScreenPictures[i].setVisible(false);
+  //   }
+  // }
+  //settings button
+  settingsX = width / 2;
+  settingsY = 1.25 * (height / 2);
+  fill(173);
+  textSize(40);
+  textAlign(CENTER, CENTER);
+  text("Settings", settingsX, settingsY);
+  fill(255, 255, 255, 100);
+  if (mouseX > settingsX - 125 && mouseX < settingsX + 125
+    && mouseY > settingsY - 30 && mouseY < settingsY + 30) {
+    rect(settingsX, settingsY, 250, 60);
+    if (mouseIsPressed) {
+      // settings menu
+    }
+  }
+}
+
+// store picture assets
+titleScreenPictures = [];
+mainInteractionPictures = [];
 
 class Picture {
   constructor(image) {
     this.pic = image;
+    this.name = "";
     this.x = 0;
     this.y = 0;
     this.tweenX = 0;
     this.tweenY = 0;
     this.text = "";
+    this.visible = true;
+  }
+  
+  setName(name) {
+    this.name = name;
+  }
+
+  setVisible(v) {
+    this.visible = v;
   }
 
   setText(str) {
@@ -118,25 +186,38 @@ class Picture {
   }
 
   draw() {
-    image(this.pic, this.x, this.y)
+    image(this.pic, this.x, this.y);
+    // if (visible) {
+    //   image(this.pic, this.x, this.y);
+    // }
     if (this.text != "") {
-      text(this.text, this.x, this.y)
+      text(this.text, this.x, this.y);
     }
   }
 }
 
 
 function draw() {
-  noStroke()
+  noStroke();
   background(11);
-  rectMode(CENTER)
-
-  //console.log(pictures)
+  rectMode(CENTER);
+  //console.log(titleScreenPictures)
   
-  for (let i = 0; i < pictures.length; i++) {
-    //console.log(pictures[i].x)
-    pictures[i].tweenPos(0.1);
-    pictures[i].draw();
-    
+  // titleScreen
+  if (stage == 0) {
+    titleScreenButtons();
+    for (let i = 0; i < titleScreenPictures.length; i++) {
+      //console.log(titleScreenPictures[i].x)
+      titleScreenPictures[i].tweenPos(0.1);
+      titleScreenPictures[i].draw();
+      
+    }
+  } else if (stage == 1) {
+    // main interaction demo
+    for (let i = 0; i < mainInteractionPictures.length; i++) {
+      //console.log(mainInteractionPictures[i].x)
+      mainInteractionPictures[i].tweenPos(0.1);
+      mainInteractionPictures[i].draw();
+    }
   }
 }
