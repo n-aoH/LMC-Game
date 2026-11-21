@@ -1,5 +1,9 @@
+
+
 let drawing;
 let pic;
+
+let titlePic
 
 async function setup() {
   createCanvas(1920, 1080);
@@ -10,9 +14,29 @@ async function setup() {
   imageMode(CENTER)
   scaleCanvas();
 
+  font = loadFont("SpaceGrotesk-Light.ttf");
+  console.log(font);
+  //textFont(font);
+
   pic = new Picture(drawing)
   pic.setPosition(900, 400);
-  pictures.push(pic);
+  //pictures.push(pic);
+
+  titlePic = new Picture(await loadImage("guis/talkAsSparrow.png"));
+  titlePic.setPosition(900,350);
+  pictures.push(titlePic);
+
+
+  
+
+  signInPic = new Picture(await loadImage("guis/signIn.png"));
+  signInPic.setPosition(900,550)
+  pictures.push(signInPic)
+
+  linePic = new Picture(await loadImage("guis/lineGradient.png"));
+  linePic.setPosition(900,630);
+  pictures.push(linePic);
+
 
 }
 
@@ -64,50 +88,55 @@ pictures = [];
 
 class Picture {
   constructor(image) {
-    self.pic = image;
-    self.x = 0;
-    self.y = 0;
-    self.tweenX = 0;
-    self.tweenY = 0;
+    this.pic = image;
+    this.x = 0;
+    this.y = 0;
+    this.tweenX = 0;
+    this.tweenY = 0;
+    this.text = "";
+  }
+
+  setText(str) {
+    this.text = str;
   }
 
   setPosition(x, y) {
-    self.x = x;
-    self.y = y;
-    self.tweenX = x;
-    self.tweenY = y;
+    this.x = x;
+    this.y = y;
+    this.tweenX = x;
+    this.tweenY = y;
   }
 
   tweenTo(x,y) {
-    self.tweenX = x;
-    self.tweenY = y;
+    this.tweenX = x;
+    this.tweenY = y;
   }
 
   tweenPos(t) {
-    self.x = self.x + (self.tweenX - self.x) * t;
-    self.y = self.y + (self.tweenY - self.y) * t;
+    this.x = this.x + (this.tweenX - this.x) * t;
+    this.y = this.y + (this.tweenY - this.y) * t;
   }
 
   draw() {
-    image(self.pic, self.x, self.y)
+    image(this.pic, this.x, this.y)
+    if (this.text != "") {
+      text(this.text, this.x, this.y)
+    }
   }
 }
 
 
 function draw() {
   noStroke()
-  background(220);
+  background(11);
   rectMode(CENTER)
-  //rect(pos[0], pos[1], size[0], size[1])
-  //console.log(pic)
-  
-  //image(drawing, 960, 540)
-  //console.log(drawing)
 
   //console.log(pictures)
+  
   for (let i = 0; i < pictures.length; i++) {
+    //console.log(pictures[i].x)
     pictures[i].tweenPos(0.1);
     pictures[i].draw();
-    pictures[i].tweenTo(mouseX, mouseY);
+    
   }
 }
