@@ -8,6 +8,7 @@ let words;
 let titlePic;
 
 async function setup() {
+  intervalTimer = 0;
   trust = 5;
   stage = 0;
   fileOpen = false;
@@ -215,7 +216,14 @@ function drawInteraction(loopTime) {
     
     // draw words
     while (true) {
-      if (drawTime > loopTime + 1000) {
+      if (intervalTimer >= 1) {
+        intervalTimer = 0;
+        for (let i = 0; i < words.length; i++) {
+        textX = (1920 - 1200) / 2 + (Math.random() * 1200);
+        textY = (1080 - 800) / 2 + (Math.random() * 800);
+        words[i].setPos(textX, textY);
+        }
+      }
         fill(200);
         text("Click on the bad words to scrub them! ;)\nxoxo\n-Atty\nDrawTime: " + drawTime + "\nLoopTime: " + loopTime, 200, 150);
         for (let i = 0; i < words.length; i++) {
@@ -224,19 +232,21 @@ function drawInteraction(loopTime) {
           } else {
             fill(255, 0, 0);
           }
-          let textX = (1920 - 1200) / 2 + (Math.random() * 1200);
-          let textY = (1080 - 800) / 2 + (Math.random() * 800);
-          words[i].setPos(textX, textY);
+          //textX = (1920 - 1200) / 2 + (Math.random() * 1200);
+          //textY = (1080 - 800) / 2 + (Math.random() * 800);
+          //words[i].setPos(textX, textY);
           text(words[i].getWord(), words[i].getX(), words[i].getY());
         }
+        drawTime = millis();
         break; // breaks while loops after drawing words once
-      }
-      drawTime = millis();
+      
+      
     }
     for (let i = 0; i < words.length; i++) {
       if (mouseX > words[i].getX() - 50 && mouseX < words[i].getX() + 50
         && mouseY > words[i].getY() - 30 && mouseY < words[i].getY() + 30) {
         fill(255, 255, 255, 50);
+
         rect(textX, textY, 100, 60);
         if (mouseIsPressed) {
           // scrub it
@@ -329,6 +339,7 @@ class Word {
 }
 
 function draw() {
+  intervalTimer += deltaTime * 0.001;
   noStroke();
   background(11);
   rectMode(CENTER);
