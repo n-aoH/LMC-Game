@@ -2,10 +2,12 @@ let drawing;
 let pic;
 let font;
 let stage;
+let fileOpen;
 let titlePic
 
 async function setup() {
   stage = 0;
+  fileOpen = false;
 
   createCanvas(1920, 1080);
   console.log("SETUP");
@@ -37,6 +39,7 @@ async function setup() {
   signInPicAlt = new Picture(await loadImage("guis/glowySignIn.png"));
   signInPicAlt.setPosition(width / 2, 550);
   signInPicAlt.setName("glowySignIn");
+  signInPicAlt.setVisible(false);
   titleScreenPictures.push(signInPicAlt);
 
   linePic = new Picture(await loadImage("guis/lineGradient.png"));
@@ -51,9 +54,34 @@ async function setup() {
   mainInteractionPictures.push(chatBox);
 
   mainInteractionHeader = new Picture(await loadImage("guis/mainInteractionHeader.png"));
-  mainInteractionHeader.setPosition(300, 100);
+  mainInteractionHeader.setPosition(260, 100);
   mainInteractionHeader.setName("mainInteractionHeader");
   mainInteractionPictures.push(mainInteractionHeader);
+
+  liveReactionWindow = new Picture(await loadImage("guis/liveReactionWindow.png"));
+  liveReactionWindow.setPosition(1630, 300);
+  liveReactionWindow.setName("liveReactionWindow");
+  mainInteractionPictures.push(liveReactionWindow);
+
+  toolbox = new Picture(await loadImage("guis/toolbox.png"));
+  toolbox.setPosition(1630, 820);
+  toolbox.setName("toolbox");
+  mainInteractionPictures.push(toolbox);
+
+  trustBar = new Picture(await loadImage("guis/trustBar.png"));
+  trustBar.setPosition(width / 2, 1000);
+  trustBar.setName("trustBar");
+  mainInteractionPictures.push(trustBar);
+
+  leftPromptBarPlaceholder = new Picture(await loadImage("guis/leftPromptBarPlaceholder.png"));
+  leftPromptBarPlaceholder.setPosition(260, 300);
+  leftPromptBarPlaceholder.setName("leftPromptBarPlaceholder");
+  mainInteractionPictures.push(leftPromptBarPlaceholder);
+
+  fileButton = new Picture(await loadImage("guis/fileButton.png"));
+  fileButton.setPosition(707, 350);
+  fileButton.setName("fileButton");
+  mainInteractionPictures.push(fileButton);
 }
 
 // Scaling function made with chatGPT
@@ -124,8 +152,8 @@ function titleScreenButtons() {
   //   }
   // }
   //settings button
-  settingsX = width / 2;
-  settingsY = 1.25 * (height / 2);
+  let settingsX = width / 2;
+  let settingsY = 1.25 * (height / 2);
   fill(173);
   textSize(40);
   textAlign(CENTER, CENTER);
@@ -137,6 +165,36 @@ function titleScreenButtons() {
     if (mouseIsPressed) {
       // settings menu
     }
+  }
+}
+
+function drawPrompt(prompt) {
+  let promptX = 565;
+  let promptY = 220;
+  fill(255);
+  textSize(25);
+  textAlign(LEFT);
+  text(prompt, promptX, promptY);
+}
+
+function mainInteractionButtons() {
+  //file button
+  let fileX = 707;
+  let fileY = 350;
+  if (!fileOpen && mouseX > fileX - 142 && mouseX < fileX + 142
+    && mouseY > fileY - 64 && mouseY < fileY + 64) {
+    // rect(settingsX, settingsY, 250, 60);
+    if (mouseIsPressed) {
+      // file opens
+      fileOpen = true;
+    }
+  } 
+}
+
+function drawInteraction() {
+  if (fileOpen) {
+    fill(255);
+    rect(width / 2, height / 2, 1200, 800, 50);
   }
 }
 
@@ -186,16 +244,15 @@ class Picture {
   }
 
   draw() {
-    image(this.pic, this.x, this.y);
-    // if (visible) {
-    //   image(this.pic, this.x, this.y);
-    // }
+    // image(this.pic, this.x, this.y);
+    if (this.visible) {
+      image(this.pic, this.x, this.y);
+    }
     if (this.text != "") {
       text(this.text, this.x, this.y);
     }
   }
 }
-
 
 function draw() {
   noStroke();
@@ -210,14 +267,16 @@ function draw() {
       //console.log(titleScreenPictures[i].x)
       titleScreenPictures[i].tweenPos(0.1);
       titleScreenPictures[i].draw();
-      
     }
   } else if (stage == 1) {
     // main interaction demo
+    drawPrompt("Hello.\nPlease scrub all of the bad words from the attached file.");
+    mainInteractionButtons();
     for (let i = 0; i < mainInteractionPictures.length; i++) {
       //console.log(mainInteractionPictures[i].x)
       mainInteractionPictures[i].tweenPos(0.1);
       mainInteractionPictures[i].draw();
     }
+    drawInteraction();
   }
 }
