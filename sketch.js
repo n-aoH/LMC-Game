@@ -193,8 +193,23 @@ function mainInteractionButtons() {
 
 function drawInteraction() {
   if (fileOpen) {
-    fill(255);
+    fill(0);
     rect(width / 2, height / 2, 1200, 800, 50);
+    let words = [new Word("Atrocia", true), new Word("patriotic", true), new Word("successful", true)
+      , new Word("glory", true), new Word("operation", true), new Word("victory", true), new Word("Ferocia", false),
+    new Word("discrimination", false), new Word("war crime", false), new Word("suspension", false), new Word("casualties", false),
+    new Word("school", false), new Word("bombs", false), new Word("children", false)];
+    fill(200);
+    text("Click on the bad words to scrub them! ;)\nxoxo\n-Atty", 450, 250);
+    for (let i = 0; i < words.length; i++) {
+      if (words[i].getGood()) {
+        fill(255);
+      } else {
+        fill(255, 0, 0);
+      }
+      // delayTime(1);
+      text(words[i].getWord(), (1920 - 1200) / 2 + (Math.random() * 1200), (1080 - 800) / 2 + (Math.random() * 800));
+    }
   }
 }
 
@@ -251,6 +266,19 @@ class Picture {
     if (this.text != "") {
       text(this.text, this.x, this.y);
     }
+  }
+}
+
+class Word {
+  constructor(str, good) {
+    this.word = str;
+    this.good = good;
+  }
+  getWord() {
+    return this.word;
+  }
+  getGood() {
+    return this.good;
   }
 }
 
