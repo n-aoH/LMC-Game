@@ -237,8 +237,8 @@ function drawInteraction(loopTime) {
     for (let i = 0; i < words.length; i++) {
       if (mouseX > words[i].getX() - 50 && mouseX < words[i].getX() + 50
         && mouseY > words[i].getY() - 30 && mouseY < words[i].getY() + 30) {
-        fill(255, 255, 255, 50);
-        rect(textX, textY, 100, 60);
+        fill(255, 255, 255, 100);
+        rect(words[i].getX(), words[i].getY(), 100, 60);
         if (mouseIsPressed) {
           // scrub it
           words.splice(i, 1);
