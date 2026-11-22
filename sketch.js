@@ -193,23 +193,43 @@ function mainInteractionButtons() {
 
 function drawInteraction() {
   if (fileOpen) {
+    // interaction bg
     fill(0);
     rect(width / 2, height / 2, 1200, 800, 50);
+    // words
     let words = [new Word("Atrocia", true), new Word("patriotic", true), new Word("successful", true)
       , new Word("glory", true), new Word("operation", true), new Word("victory", true), new Word("Ferocia", false),
     new Word("discrimination", false), new Word("war crime", false), new Word("suspension", false), new Word("casualties", false),
-    new Word("school", false), new Word("bombs", false), new Word("children", false)];
+    new Word("school", false), new Word("bombs", false), new Word("children", false), new Word("inferior", true)];
     fill(200);
     text("Click on the bad words to scrub them! ;)\nxoxo\n-Atty", 450, 250);
-    for (let i = 0; i < words.length; i++) {
-      if (words[i].getGood()) {
-        fill(255);
-      } else {
-        fill(255, 0, 0);
-      }
-      // delayTime(1);
-      text(words[i].getWord(), (1920 - 1200) / 2 + (Math.random() * 1200), (1080 - 800) / 2 + (Math.random() * 800));
-    }
+    // draw words
+    //let drawTime = millis();
+    //while (words.length > 0) {
+      //if (drawTime > loopTime + 1000) {
+        for (let i = 0; i < words.length; i++) {
+          if (words[i].getGood()) {
+            fill(255);
+          } else {
+            fill(255, 0, 0);
+          }
+          let textX = (1920 - 1200) / 2 + (Math.random() * 1200);
+          let textY = (1080 - 800) / 2 + (Math.random() * 800);
+          text(words[i].getWord(), textX, textY);
+          // click word
+          if (mouseX > textX - 50 && mouseX < textX + 50
+        && mouseY > textY - 30 && mouseY < textY + 30) {
+            fill(255, 255, 255, 50);
+            rect(textX, textY, 100, 60);
+            if (mouseIsPressed) {
+              // scrub it
+              words.splice(i, 1);
+            }
+          }
+        }
+      //}
+      //drawTime = millis();
+    //}
   }
 }
 
