@@ -4,12 +4,17 @@ let font;
 let stage;
 let fileOpen;
 let trust;
-let titlePic
+let words;
+let titlePic;
 
 async function setup() {
   trust = 5;
   stage = 0;
   fileOpen = false;
+  words = [new Word("Atrocia", true), new Word("patriotic", true), new Word("successful", true)
+      , new Word("glory", true), new Word("operation", true), new Word("victory", true), new Word("Ferocia", false),
+    new Word("discrimination", false), new Word("war crime", false), new Word("suspension", false), new Word("casualties", false),
+    new Word("school", false), new Word("bombs", false), new Word("children", false), new Word("inferior", true)];
 
   createCanvas(1920, 1080);
   console.log("SETUP");
@@ -129,7 +134,7 @@ function getAdjustedSize(x, y) {
   return [x * avg, y * avg];
   
 }
-
+// Written by Marcus
 function titleScreenButtons() {
   if (mouseX > width / 2 - 100 && mouseX < width / 2 + 100
     && mouseY > 550 - 30 && mouseY < 550 + 30) {
@@ -169,7 +174,7 @@ function titleScreenButtons() {
     }
   }
 }
-
+// Written by Marcus
 function drawPrompt(prompt) {
   let promptX = 565;
   let promptY = 220;
@@ -178,7 +183,7 @@ function drawPrompt(prompt) {
   textAlign(LEFT);
   text(prompt, promptX, promptY);
 }
-
+// Written by Marcus
 function drawTrust() {
   fill(111, 232, 93);
   rect(102, 1000, trust/100 * 1805, 12, 30);
@@ -186,7 +191,7 @@ function drawTrust() {
   textSize(30);
   text("trust_", 60, 965);
 }
-
+// Written by Marcus
 function mainInteractionButtons() {
   //file button
   let fileX = 707;
@@ -200,23 +205,19 @@ function mainInteractionButtons() {
     }
   } 
 }
-
-function drawInteraction() {
+// Written by Marcus
+function drawInteraction(loopTime) {
   if (fileOpen) {
     // interaction bg
+    let drawTime = millis();
     fill(0);
-    rect(width / 2, height / 2, 1200, 800, 50);
-    // words
-    let words = [new Word("Atrocia", true), new Word("patriotic", true), new Word("successful", true)
-      , new Word("glory", true), new Word("operation", true), new Word("victory", true), new Word("Ferocia", false),
-    new Word("discrimination", false), new Word("war crime", false), new Word("suspension", false), new Word("casualties", false),
-    new Word("school", false), new Word("bombs", false), new Word("children", false), new Word("inferior", true)];
-    fill(200);
-    text("Click on the bad words to scrub them! ;)\nxoxo\n-Atty", 450, 250);
+    rect(width / 2, height / 2, 1700, 1000, 50);
+    
     // draw words
-    //let drawTime = millis();
-    //while (words.length > 0) {
-      //if (drawTime > loopTime + 1000) {
+    while (true) {
+      if (drawTime > loopTime + 1000) {
+        fill(200);
+        text("Click on the bad words to scrub them! ;)\nxoxo\n-Atty\nDrawTime: " + drawTime + "\nLoopTime: " + loopTime, 200, 150);
         for (let i = 0; i < words.length; i++) {
           if (words[i].getGood()) {
             fill(255);
@@ -225,21 +226,24 @@ function drawInteraction() {
           }
           let textX = (1920 - 1200) / 2 + (Math.random() * 1200);
           let textY = (1080 - 800) / 2 + (Math.random() * 800);
-          text(words[i].getWord(), textX, textY);
-          // click word
-          if (mouseX > textX - 50 && mouseX < textX + 50
-        && mouseY > textY - 30 && mouseY < textY + 30) {
-            fill(255, 255, 255, 50);
-            rect(textX, textY, 100, 60);
-            if (mouseIsPressed) {
-              // scrub it
-              words.splice(i, 1);
-            }
-          }
+          words[i].setPos(textX, textY);
+          text(words[i].getWord(), words[i].getX(), words[i].getY());
         }
-      //}
-      //drawTime = millis();
-    //}
+        break; // breaks while loops after drawing words once
+      }
+      drawTime = millis();
+    }
+    for (let i = 0; i < words.length; i++) {
+      if (mouseX > words[i].getX() - 50 && mouseX < words[i].getX() + 50
+        && mouseY > words[i].getY() - 30 && mouseY < words[i].getY() + 30) {
+        fill(255, 255, 255, 50);
+        rect(textX, textY, 100, 60);
+        if (mouseIsPressed) {
+          // scrub it
+          words.splice(i, 1);
+        }
+      }
+    }
   }
 }
 
@@ -298,11 +302,13 @@ class Picture {
     }
   }
 }
-
+// Written by Marcus
 class Word {
   constructor(str, good) {
     this.word = str;
     this.good = good;
+    this.x = 0;
+    this.y = 0;
   }
   getWord() {
     return this.word;
@@ -310,6 +316,16 @@ class Word {
   getGood() {
     return this.good;
   }
+  getX() {
+    return this.x;
+  }
+  getY() {
+    return this.y;
+  }
+  setPos(x, y) {
+    this.x = x;
+    this.y = y;
+  } 
 }
 
 function draw() {
@@ -318,6 +334,7 @@ function draw() {
   rectMode(CENTER);
   //console.log(titleScreenPictures)
   
+  // Written by Marcus
   // titleScreen
   if (stage == 0) {
     titleScreenButtons();
@@ -336,6 +353,6 @@ function draw() {
       mainInteractionPictures[i].tweenPos(0.1);
       mainInteractionPictures[i].draw();
     }
-    drawInteraction();
+    drawInteraction(millis());
   }
 }
