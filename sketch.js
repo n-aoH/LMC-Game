@@ -217,7 +217,8 @@ function drawInteraction(loopTime) {
     while (true) {
       if (drawTime > loopTime + 1000) {
         fill(200);
-        text("Click on the bad words to scrub them! ;)\nxoxo\n-Atty\nDrawTime: " + drawTime + "\nLoopTime: " + loopTime, 200, 150);
+        text("Click on the bad words to scrub them! ;)\nxoxo\n-Atty\nDrawTime: " +
+          drawTime + "\nLoopTime: " + loopTime + "\nWords: " + words.length, 200, 150);
         for (let i = 0; i < words.length; i++) {
           if (words[i].getGood()) {
             fill(255);
