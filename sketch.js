@@ -3,9 +3,11 @@ let pic;
 let font;
 let stage;
 let fileOpen;
+let trust;
 let titlePic
 
 async function setup() {
+  trust = 5;
   stage = 0;
   fileOpen = false;
 
@@ -177,6 +179,14 @@ function drawPrompt(prompt) {
   text(prompt, promptX, promptY);
 }
 
+function drawTrust() {
+  fill(111, 232, 93);
+  rect(102, 1000, trust/100 * 1805, 12, 30);
+  fill(170);
+  textSize(30);
+  text("trust_", 60, 965);
+}
+
 function mainInteractionButtons() {
   //file button
   let fileX = 707;
@@ -320,6 +330,7 @@ function draw() {
     // main interaction demo
     drawPrompt("Hello.\nPlease scrub all of the bad words from the attached file.");
     mainInteractionButtons();
+    drawTrust();
     for (let i = 0; i < mainInteractionPictures.length; i++) {
       //console.log(mainInteractionPictures[i].x)
       mainInteractionPictures[i].tweenPos(0.1);
