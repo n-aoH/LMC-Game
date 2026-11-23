@@ -61,6 +61,7 @@ async function setup() {
   chatBox = new Picture(await loadImage("guis/boxWidget.png"));
   chatBox.setPosition(width / 2, 820);
   chatBox.setName("chatBox");
+  chatBox.setVisible(false);
   mainInteractionPictures.push(chatBox);
 
   mainInteractionHeader = new Picture(await loadImage("guis/mainInteractionHeader.png"));
@@ -205,6 +206,7 @@ function drawTrust() {
   } else {
     text("trust", 60, 965);
   }
+  rectMode(CENTER);
 }
 // Written by Marcus
 function swapVisible(imageArray, makeInvis, makeVis) {
@@ -397,15 +399,38 @@ function draw() {
     // main interaction demo
     drawPrompt("Hello.\nPlease scrub all of the bad words from the attached file.");
     mainInteractionButtons();
+    drawTrust();
     for (let i = 0; i < mainInteractionPictures.length; i++) {
       //console.log(mainInteractionPictures[i].x)
       mainInteractionPictures[i].tweenPos(0.1);
       mainInteractionPictures[i].draw();
     }
     drawInteraction();
-    drawTrust();
     if (trust <= 0) {
-
+      fill(255);
+      textSize(25);
+      textAlign(LEFT);
+      text("Seriously? We invested all that money into this tech just for you\nto mess it up?", 565, 470);
+      if (intervalTimer >= 3) {
+        fill(255, 0, 0);
+        textAlign(RIGHT);
+        text("You’re absolutely right to push back on that, it’s not just\nwhat I failed to redact, but what I redacted too much.\nIn the future, it’s absolutely crucial that we delve\ninto this sensitivebalance to make\nsure no more mistakes happen!",
+          1365, 590);
+        if (intervalTimer >= 7) {
+          fill(255);
+          textAlign(LEFT);
+          text("This is the last mistake you’ll be making.\nYou’re getting shut down.", 565, 700);
+          if (intervalTimer >= 11) {
+            stage = -1;
+            intervalTimer = 0;
+          }
+        }
+      }
     }
+  } else if (stage == -1) {
+    fill(255, 0, 0);
+    textSize(50);
+    textAlign(CENTER);
+    text("You've been recycled.", width / 2, height / 2);
   }
 }
