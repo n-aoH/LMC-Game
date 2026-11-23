@@ -5,6 +5,7 @@ let stage;
 let fileOpen;
 let trust;
 let words;
+let interactionFinished;
 let titlePic;
 
 async function setup() {
@@ -12,6 +13,7 @@ async function setup() {
   trust = 5;
   stage = 0;
   fileOpen = false;
+  interactionFinished = false;
   words = [new Word("Atrocia", true), new Word("patriotic", true), new Word("successful", true)
       , new Word("glory", true), new Word("operation", true), new Word("victory", true), new Word("Ferocia", false),
     new Word("discrimination", false), new Word("war crime", false), new Word("suspension", false), new Word("casualties", false),
@@ -220,7 +222,7 @@ function mainInteractionButtons() {
   //file button
   let fileX = 707;
   let fileY = 350;
-  if (!fileOpen && mouseX > fileX - 142 && mouseX < fileX + 142
+  if (!fileOpen && !interactionFinished && mouseX > fileX - 142 && mouseX < fileX + 142
     && mouseY > fileY - 64 && mouseY < fileY + 64) {
     // rect(settingsX, settingsY, 250, 60);
     if (mouseIsPressed) {
@@ -279,10 +281,12 @@ function drawInteraction() {
     }
     if (fails <= 0) {
       fileOpen = false;
+      interactionFinished = true;
       trust -= 5;
       swapVisible(mainInteractionPictures, "itguy_neutral_1", "itguy_mad_1");
     } else if (bad <= 0) {
       fileOpen = false;
+      interactionFinished = true;
       trust += 5;
       swapVisible(mainInteractionPictures, "itguy_neutral_1", "itguy_happy_1");
     }
