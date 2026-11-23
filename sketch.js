@@ -69,7 +69,25 @@ async function setup() {
   liveReactionWindow = new Picture(await loadImage("guis/liveReactionWindow.png"));
   liveReactionWindow.setPosition(1630, 300);
   liveReactionWindow.setName("liveReactionWindow");
+  liveReactionWindow.setVisible(false);
   mainInteractionPictures.push(liveReactionWindow);
+
+  itguy_neutral_1 = new Picture(await loadImage("guis/itguy_neutral_1.png"));
+  itguy_neutral_1.setPosition(1630, 300);
+  itguy_neutral_1.setName("itguy_neutral_1");
+  mainInteractionPictures.push(itguy_neutral_1);
+
+  itguy_mad_1 = new Picture(await loadImage("guis/itguy_mad_1.png"));
+  itguy_mad_1.setPosition(1630, 300);
+  itguy_mad_1.setName("itguy_mad_1");
+  itguy_mad_1.setVisible(false);
+  mainInteractionPictures.push(itguy_mad_1);
+
+  itguy_happy_1 = new Picture(await loadImage("guis/itguy_happy_1.png"));
+  itguy_happy_1.setPosition(1630, 300);
+  itguy_happy_1.setName("itguy_happy_1");
+  itguy_happy_1.setVisible(false);
+  mainInteractionPictures.push(itguy_happy_1);
 
   toolbox = new Picture(await loadImage("guis/toolbox.png"));
   toolbox.setPosition(1630, 820);
@@ -268,9 +286,25 @@ function drawInteraction() {
     if (fails <= 0) {
       fileOpen = false;
       trust -= 5;
+      for (let i = 0; i < mainInteractionPictures.length; i++) {
+        if (mainInteractionPictures[i].name == "itguy_neutral_1") {
+          mainInteractionPictures[i].setVisible(false);
+        }
+        if (mainInteractionPictures[i].name == "itguy_mad_1") {
+          mainInteractionPictures[i].setVisible(true);
+        }
+      }
     } else if (bad <= 0) {
       fileOpen = false;
       trust += 5;
+      for (let i = 0; i < mainInteractionPictures.length; i++) {
+        if (mainInteractionPictures[i].name == "itguy_neutral_1") {
+          mainInteractionPictures[i].setVisible(false);
+        }
+        if (mainInteractionPictures[i].name == "itguy_happy_1") {
+          mainInteractionPictures[i].setVisible(true);
+        }
+      }
     }
   }
 }
@@ -386,5 +420,8 @@ function draw() {
     }
     drawInteraction();
     drawTrust();
+    if (trust <= 0) {
+
+    }
   }
 }
