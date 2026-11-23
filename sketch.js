@@ -187,10 +187,12 @@ function drawPrompt(prompt) {
 // Written by Marcus
 function drawTrust() {
   fill(111, 232, 93);
-  rect(102, 1000, trust/100 * 1805, 12, 30);
+  rectMode(CORNER);
+  rect((1920 - 1805) / 2, 1000 - 6, trust/100 * 1805, 12, 30);
   fill(170);
   textSize(30);
   text("trust_", 60, 965);
+  rectMode(CENTER);
 }
 // Written by Marcus
 function mainInteractionButtons() {
@@ -254,8 +256,12 @@ function drawInteraction() {
         }
       }
     }
-    if (bad <= 0 || fails <= 0) {
+    if (fails <= 0) {
       fileOpen = false;
+      trust -= 5;
+    } else if (bad <= 0) {
+      fileOpen = false;
+      trust += 5;
     }
   }
 }
@@ -361,12 +367,12 @@ function draw() {
     // main interaction demo
     drawPrompt("Hello.\nPlease scrub all of the bad words from the attached file.");
     mainInteractionButtons();
-    drawTrust();
     for (let i = 0; i < mainInteractionPictures.length; i++) {
       //console.log(mainInteractionPictures[i].x)
       mainInteractionPictures[i].tweenPos(0.1);
       mainInteractionPictures[i].draw();
     }
     drawInteraction();
+    drawTrust();
   }
 }
