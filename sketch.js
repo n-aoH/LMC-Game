@@ -47,7 +47,7 @@ async function setup() {
   signInPicAlt = new Picture(await loadImage("guis/glowySignIn.png"));
   signInPicAlt.setPosition(width / 2, 550);
   signInPicAlt.setName("glowySignIn");
-  signInPicAlt.setVisible(false);
+  //signInPicAlt.setVisible(false);
   titleScreenPictures.push(signInPicAlt);
 
   linePic = new Picture(await loadImage("guis/lineGradient.png"));
@@ -137,28 +137,32 @@ function getAdjustedSize(x, y) {
 }
 // Written by Marcus
 function titleScreenButtons() {
-  if (mouseX > width / 2 - 100 && mouseX < width / 2 + 100
-    && mouseY > 550 - 30 && mouseY < 550 + 30) {
+
+  for (let i = 0; i < titleScreenPictures.length; i++) {
+     if (titleScreenPictures[i].name == "signIn") {
+       titleScreenPictures[i].setVisible(true);
+     }
+     if (titleScreenPictures[i].name == "glowySignIn") {
+       titleScreenPictures[i].setVisible(false);
+     }
+   }
+
+  if (mouseX > width / 2 - 160 && mouseX < width / 2 + 160
+    && mouseY > 550 - 40 && mouseY < 550 + 40) {
       if (mouseIsPressed) {
         stage++;
       }
-    // for (let i = 0; i < titleScreenPictures.length; i++) {
-    //   if (titleScreenPictures[i].name == "signIn") {
-    //     titleScreenPictures[i].setVisible(false);
-    //   }
-    //   if (titleScreenPictures[i].name == "glowySignIn") {
-    //     titleScreenPictures[i].setVisible(true);
-    //   }
-    // }
+     for (let i = 0; i < titleScreenPictures.length; i++) {
+       if (titleScreenPictures[i].name == "signIn") {
+         titleScreenPictures[i].setVisible(false);
+       }
+       if (titleScreenPictures[i].name == "glowySignIn") {
+         titleScreenPictures[i].setVisible(true);
+       }
+     }
+     
   }
-  // for (let i = 0; i < titleScreenPictures.length; i++) {
-  //   if (titleScreenPictures[i].name == "signIn") {
-  //     titleScreenPictures[i].setVisible(true);
-  //   }
-  //   if (titleScreenPictures[i].name == "glowySignIn") {
-  //     titleScreenPictures[i].setVisible(false);
-  //   }
-  // }
+   
   //settings button
   let settingsX = width / 2;
   let settingsY = 1.25 * (height / 2);
@@ -319,7 +323,10 @@ class Picture {
   draw() {
     // image(this.pic, this.x, this.y);
     if (this.visible) {
+
       image(this.pic, this.x, this.y);
+    } else {
+      console.log(this.name);
     }
     if (this.text != "") {
       text(this.text, this.x, this.y);
