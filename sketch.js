@@ -206,53 +206,56 @@ function mainInteractionButtons() {
     }
   } 
 }
-// Written by Marcus
-function drawInteraction(loopTime) {
+// Written by Marcus and Noah
+let fails = 3;
+function drawInteraction() {
   if (fileOpen) {
     // interaction bg
-    let drawTime = millis();
+    let bad = 0;
     fill(0);
     rect(width / 2, height / 2, 1700, 1000, 50);
-    
+    textSize(30);
     // draw words
     while (true) {
       if (intervalTimer >= 1) {
         intervalTimer = 0;
         for (let i = 0; i < words.length; i++) {
-        textX = (1920 - 1200) / 2 + (Math.random() * 1200);
-        textY = (1080 - 800) / 2 + (Math.random() * 800);
-        words[i].setPos(textX, textY);
+          textX = (1920 - 1200) / 2 + (Math.random() * 1200);
+          textY = (1080 - 800) / 2 + (Math.random() * 800);
+          words[i].setPos(textX, textY);
         }
       }
-        fill(200);
-        text("Click on the bad words to scrub them! ;)\nxoxo\n-Atty\nDrawTime: " +
-          drawTime + "\nLoopTime: " + loopTime + "\nWords: " + words.length, 200, 150);
-        for (let i = 0; i < words.length; i++) {
-          if (words[i].getGood()) {
-            fill(255);
-          } else {
-            fill(255, 0, 0);
-          }
-          //textX = (1920 - 1200) / 2 + (Math.random() * 1200);
-          //textY = (1080 - 800) / 2 + (Math.random() * 800);
-          //words[i].setPos(textX, textY);
-          text(words[i].getWord(), words[i].getX(), words[i].getY());
+      for (let i = 0; i < words.length; i++) {
+        if (words[i].getGood()) {
+          fill(255);
+        } else {
+          fill(255, 0, 0);
+          bad++;
         }
-        drawTime = millis();
-        break; // breaks while loops after drawing words once
-      
-      
+        text(words[i].getWord(), words[i].getX(), words[i].getY());
+      }
+      fill(200);
+      text("Click on the bad words to scrub them! ;)\nFails Left: " + fails, 200, 150);
+      break; // breaks while loops after drawing words once    
     }
     for (let i = 0; i < words.length; i++) {
-      if (mouseX > words[i].getX() - 50 && mouseX < words[i].getX() + 50
+      if (mouseX > words[i].getX() && mouseX < words[i].getX() + words[i].getWord().length * 20
         && mouseY > words[i].getY() - 30 && mouseY < words[i].getY() + 30) {
         fill(255, 255, 255, 100);
-        rect(words[i].getX(), words[i].getY(), 100, 60);
+        rect(words[i].getX() + words[i].getWord().length * 8, words[i].getY(), words[i].getWord().length * 18, 60);
         if (mouseIsPressed) {
           // scrub it
+          if (!words[i].getGood()) {
+            bad--;
+          } else {
+            fails--;
+          }
           words.splice(i, 1);
         }
       }
+    }
+    if (bad <= 0 || fails <= 0) {
+      fileOpen = false;
     }
   }
 }
@@ -364,6 +367,6 @@ function draw() {
       mainInteractionPictures[i].tweenPos(0.1);
       mainInteractionPictures[i].draw();
     }
-    drawInteraction(millis());
+    drawInteraction();
   }
 }
