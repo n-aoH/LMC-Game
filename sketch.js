@@ -153,32 +153,16 @@ function getAdjustedSize(x, y) {
   return [x * avg, y * avg];
   
 }
-// Written by Marcus
+// Written by Noah and Marcus
 function titleScreenButtons() {
-
-  for (let i = 0; i < titleScreenPictures.length; i++) {
-     if (titleScreenPictures[i].name == "signIn") {
-       titleScreenPictures[i].setVisible(true);
-     }
-     if (titleScreenPictures[i].name == "glowySignIn") {
-       titleScreenPictures[i].setVisible(false);
-     }
-   }
+  swapVisible(titleScreenPictures, "glowySignIn", "signIn");
 
   if (mouseX > width / 2 - 160 && mouseX < width / 2 + 160
     && mouseY > 550 - 40 && mouseY < 550 + 40) {
-      if (mouseIsPressed) {
-        stage++;
-      }
-     for (let i = 0; i < titleScreenPictures.length; i++) {
-       if (titleScreenPictures[i].name == "signIn") {
-         titleScreenPictures[i].setVisible(false);
-       }
-       if (titleScreenPictures[i].name == "glowySignIn") {
-         titleScreenPictures[i].setVisible(true);
-       }
-     }
-     
+    if (mouseIsPressed) {
+      stage++;
+    }
+    swapVisible(titleScreenPictures, "signIn", "glowySignIn");
   }
    
   //settings button
@@ -206,7 +190,7 @@ function drawPrompt(prompt) {
   textAlign(LEFT);
   text(prompt, promptX, promptY);
 }
-// Written by Marcus
+// Written by Noah and Marcus
 function drawTrust() {
   fill(111, 232, 93);
   rectMode(CORNER);
@@ -219,7 +203,17 @@ function drawTrust() {
   } else {
     text("trust", 60, 965);
   }
-  
+}
+// Written by Marcus
+function swapVisible(imageArray, makeInvis, makeVis) {
+  for (let i = 0; i < imageArray.length; i++) {
+    if (imageArray[i].name == makeInvis) {
+      imageArray[i].setVisible(false);
+    }
+    if (imageArray[i].name == makeVis) {
+      imageArray[i].setVisible(true);
+    }
+  }
 }
 // Written by Marcus
 function mainInteractionButtons() {
@@ -286,25 +280,11 @@ function drawInteraction() {
     if (fails <= 0) {
       fileOpen = false;
       trust -= 5;
-      for (let i = 0; i < mainInteractionPictures.length; i++) {
-        if (mainInteractionPictures[i].name == "itguy_neutral_1") {
-          mainInteractionPictures[i].setVisible(false);
-        }
-        if (mainInteractionPictures[i].name == "itguy_mad_1") {
-          mainInteractionPictures[i].setVisible(true);
-        }
-      }
+      swapVisible(mainInteractionPictures, "itguy_neutral_1", "itguy_mad_1");
     } else if (bad <= 0) {
       fileOpen = false;
       trust += 5;
-      for (let i = 0; i < mainInteractionPictures.length; i++) {
-        if (mainInteractionPictures[i].name == "itguy_neutral_1") {
-          mainInteractionPictures[i].setVisible(false);
-        }
-        if (mainInteractionPictures[i].name == "itguy_happy_1") {
-          mainInteractionPictures[i].setVisible(true);
-        }
-      }
+      swapVisible(mainInteractionPictures, "itguy_neutral_1", "itguy_happy_1");
     }
   }
 }
