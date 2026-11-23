@@ -190,7 +190,13 @@ function drawTrust() {
   rect(102, 1000, trust/100 * 1805, 12, 30);
   fill(170);
   textSize(30);
-  text("trust_", 60, 965);
+
+  if ((millis() / 1000) % 1 < 0.5) {
+    text("trust_", 60, 965);
+  } else {
+    text("trust", 60, 965);
+  }
+  
 }
 // Written by Marcus
 function mainInteractionButtons() {
