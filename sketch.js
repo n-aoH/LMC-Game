@@ -8,6 +8,10 @@ let words;
 let interactionFinished;
 let promptSelected;
 let titlePic;
+// store assets
+let titleScreenPictures = [];
+let mainInteractionPictures = [];
+let soundEffects = [];
 
 async function setup() {
   intervalTimer = 0;
@@ -113,6 +117,9 @@ async function setup() {
   fileButton.setPosition(707, 350);
   fileButton.setName("fileButton");
   mainInteractionPictures.push(fileButton);
+
+  //sfx
+  //soundEffects.push(new SoundEffect("hoverSound", await loadSound("sfx/hoverSound.mp3")));
 }
 
 // Scaling function made with chatGPT
@@ -164,6 +171,7 @@ function titleScreenButtons() {
 
   if (mouseX > width / 2 - 160 && mouseX < width / 2 + 160
     && mouseY > 550 - 40 && mouseY < 550 + 40) {
+    //getFromArray("hoverSound", soundEffects).getSFX().play();
     if (mouseIsPressed) {
       stage++;
       promptSelected++;
@@ -182,6 +190,7 @@ function titleScreenButtons() {
   if (mouseX > settingsX - 125 && mouseX < settingsX + 125
     && mouseY > settingsY - 30 && mouseY < settingsY + 30) {
     rect(settingsX, settingsY, 250, 60);
+    //getFromArray("hoverSound", soundEffects).getSFX().play();
     if (mouseIsPressed) {
       // settings menu
     }
@@ -213,14 +222,14 @@ function drawTrust() {
 }
 // Written by Marcus
 function swapVisible(imageArray, makeInvis, makeVis) {
-  getImage(makeInvis, imageArray).setVisible(false);
-  getImage(makeVis, imageArray).setVisible(true);
+  getFromArray(makeInvis, imageArray).setVisible(false);
+  getFromArray(makeVis, imageArray).setVisible(true);
 }
 // Written by Marcus
-function getImage(name, imageArray) {
-  for (let i = 0; i < imageArray.length; i++) {
-    if (imageArray[i].name == name) {
-      return imageArray[i];
+function getFromArray(name, array) {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].name == name) {
+      return array[i];
     }
   }
 }
@@ -249,7 +258,7 @@ function drawAllPrompts() {
     }
   } else if (promptSelected == 2) {
     drawPrompt("Ur Mom.");
-    getImage("fileButton", mainInteractionPictures).setVisible(false);
+    getFromArray("fileButton", mainInteractionPictures).setVisible(false);
   }
 }
 // Written by Marcus and Noah
@@ -337,10 +346,6 @@ function failStateSequence() {
   }
 }
 
-// store picture assets
-titleScreenPictures = [];
-mainInteractionPictures = [];
-
 class Picture {
   constructor(image) {
     this.pic = image;
@@ -383,9 +388,7 @@ class Picture {
   }
 
   draw() {
-    // image(this.pic, this.x, this.y);
     if (this.visible) {
-
       image(this.pic, this.x, this.y);
     } else {
       console.log(this.name);
@@ -393,6 +396,20 @@ class Picture {
     if (this.text != "") {
       text(this.text, this.x, this.y);
     }
+  }
+}
+
+// Written by Marcus
+class SoundEffect {
+  constructor(name, sfx) {
+    this.name = name;
+    this.sfx = sfx;
+  }
+  getName() {
+    return this.name;
+  }
+  getSFX() {
+    return this.sfx;
   }
 }
 // Written by Marcus
