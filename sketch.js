@@ -6,12 +6,14 @@ let fileOpen;
 let trust;
 let words;
 let interactionFinished;
+let promptSelected;
 let titlePic;
 
 async function setup() {
   intervalTimer = 0;
   trust = 5;
   stage = 0;
+  promptSelected = 0;
   fileOpen = false;
   interactionFinished = false;
   words = [new Word("Atrocia", true), new Word("patriotic", true), new Word("successful", true)
@@ -164,6 +166,7 @@ function titleScreenButtons() {
     && mouseY > 550 - 40 && mouseY < 550 + 40) {
     if (mouseIsPressed) {
       stage++;
+      promptSelected++;
     }
     swapVisible(titleScreenPictures, "signIn", "glowySignIn");
   }
@@ -210,28 +213,44 @@ function drawTrust() {
 }
 // Written by Marcus
 function swapVisible(imageArray, makeInvis, makeVis) {
+  getImage(makeInvis, imageArray).setVisible(false);
+  getImage(makeVis, imageArray).setVisible(true);
+}
+// Written by Marcus
+function getImage(name, imageArray) {
   for (let i = 0; i < imageArray.length; i++) {
-    if (imageArray[i].name == makeInvis) {
-      imageArray[i].setVisible(false);
-    }
-    if (imageArray[i].name == makeVis) {
-      imageArray[i].setVisible(true);
+    if (imageArray[i].name == name) {
+      return imageArray[i];
     }
   }
 }
+// Written by Noah and Marcus
+function drawImageArray(imageArray) {
+  for (let i = 0; i < imageArray.length; i++) {
+    //console.log(imageArray[i].x)
+    imageArray[i].tweenPos(0.1);
+    imageArray[i].draw();
+  }
+}
 // Written by Marcus
-function mainInteractionButtons() {
+function drawAllPrompts() {
   //file button
-  let fileX = 707;
-  let fileY = 350;
-  if (!fileOpen && !interactionFinished && mouseX > fileX - 142 && mouseX < fileX + 142
-    && mouseY > fileY - 64 && mouseY < fileY + 64) {
-    // rect(settingsX, settingsY, 250, 60);
-    if (mouseIsPressed) {
-      // file opens
-      fileOpen = true;
+  if (promptSelected == 1) {
+    drawPrompt("Hello.\nPlease scrub all of the bad words from the attached file.");
+    let fileX = 707;
+    let fileY = 350;
+    if (!fileOpen && !interactionFinished && mouseX > fileX - 142 && mouseX < fileX + 142
+      && mouseY > fileY - 64 && mouseY < fileY + 64) {
+      // rect(settingsX, settingsY, 250, 60);
+      if (mouseIsPressed) {
+        // file opens
+        fileOpen = true;
+      }
     }
-  } 
+  } else if (promptSelected == 2) {
+    drawPrompt("Ur Mom.");
+    getImage("fileButton", mainInteractionPictures).setVisible(false);
+  }
 }
 // Written by Marcus and Noah
 let fails = 3;
@@ -290,7 +309,30 @@ function drawInteraction() {
       fileOpen = false;
       interactionFinished = true;
       trust += 5;
+      promptSelected++;
       swapVisible(mainInteractionPictures, "itguy_neutral_1", "itguy_happy_1");
+    }
+  }
+}
+// Written by Marcus
+function failStateSequence() {
+  fill(255);
+  textSize(25);
+  textAlign(LEFT);
+  text("Seriously? We invested all that money into this tech just for you\nto mess it up?", 565, 470);
+  if (intervalTimer >= 3) {
+    fill(255, 0, 0);
+    textAlign(RIGHT);
+    text("You’re absolutely right to push back on that, it’s not just\nwhat I failed to redact, but what I redacted too much.\nIn the future, it’s absolutely crucial that we delve\ninto this sensitive balance to make\nsure no more mistakes happen!",
+      1365, 590);
+    if (intervalTimer >= 7) {
+      fill(255);
+      textAlign(LEFT);
+      text("This is the last mistake you’ll be making.\nYou’re getting shut down.", 565, 700);
+      if (intervalTimer >= 11) {
+        stage = -1;
+        intervalTimer = 0;
+      }
     }
   }
 }
@@ -376,7 +418,7 @@ class Word {
   setPos(x, y) {
     this.x = x;
     this.y = y;
-  } 
+  }
 }
 
 function draw() {
@@ -390,42 +432,15 @@ function draw() {
   // titleScreen
   if (stage == 0) {
     titleScreenButtons();
-    for (let i = 0; i < titleScreenPictures.length; i++) {
-      //console.log(titleScreenPictures[i].x)
-      titleScreenPictures[i].tweenPos(0.1);
-      titleScreenPictures[i].draw();
-    }
+    drawImageArray(titleScreenPictures);
   } else if (stage == 1) {
     // main interaction demo
-    drawPrompt("Hello.\nPlease scrub all of the bad words from the attached file.");
-    mainInteractionButtons();
+    drawAllPrompts();
     drawTrust();
-    for (let i = 0; i < mainInteractionPictures.length; i++) {
-      //console.log(mainInteractionPictures[i].x)
-      mainInteractionPictures[i].tweenPos(0.1);
-      mainInteractionPictures[i].draw();
-    }
+    drawImageArray(mainInteractionPictures);
     drawInteraction();
     if (trust <= 0) {
-      fill(255);
-      textSize(25);
-      textAlign(LEFT);
-      text("Seriously? We invested all that money into this tech just for you\nto mess it up?", 565, 470);
-      if (intervalTimer >= 3) {
-        fill(255, 0, 0);
-        textAlign(RIGHT);
-        text("You’re absolutely right to push back on that, it’s not just\nwhat I failed to redact, but what I redacted too much.\nIn the future, it’s absolutely crucial that we delve\ninto this sensitivebalance to make\nsure no more mistakes happen!",
-          1365, 590);
-        if (intervalTimer >= 7) {
-          fill(255);
-          textAlign(LEFT);
-          text("This is the last mistake you’ll be making.\nYou’re getting shut down.", 565, 700);
-          if (intervalTimer >= 11) {
-            stage = -1;
-            intervalTimer = 0;
-          }
-        }
-      }
+      failStateSequence();
     }
   } else if (stage == -1) {
     fill(255, 0, 0);
