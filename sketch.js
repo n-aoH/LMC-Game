@@ -32,12 +32,12 @@ async function setup() {
   console.log("SETUP");
   
   drawing = await loadImage("drawing.png");
-  console.log("HOLA");
+  //console.log("HOLA");
   imageMode(CENTER);
   scaleCanvas();
 
   font = await loadFont("SpaceGrotesk-Light.ttf");
-  console.log(font);
+  //console.log(font);
   textFont(font);
 
   pic = new Picture(drawing);
@@ -145,31 +145,12 @@ function windowResized() {
     scaleCanvas();
 }
 
-function preload() {
-  console.log("HII")
-  pic = "HIIIi"
-  drawing = loadImage("drawing.png");
-  console.log(drawing);
-  
-  //pic = new Picture(drawing)
-}
 
 
 function tween(a, b, t) {
   return a + (b - a) * t;
 }
 
-function getAdjustedPos(x, y, anchorX, anchorY) {
-  return [x + (anchorX * windowWidth), y + (anchorY * windowHeight)];
-}
-
-function getAdjustedSize(x, y) {
-  let avg = (windowWidth + windowHeight) / 2;
-  avg /= 100;
-  
-  return [x * avg, y * avg];
-  
-}
 // Written by Noah and Marcus
 function titleScreenButtons() {
   swapVisible(titleScreenPictures, "glowySignIn", "signIn");
@@ -221,7 +202,7 @@ function drawTrust() {
   rectMode(CORNER);
   rect((1920 - 1805) / 2, 1000 - 6, visualTrust/100 * 1805, 12, 30);
   imageMode(CORNER)
-  image(barGradient, (1920 - 1805) / 2, 1000 - 6, visualTrust/100 * 1805 * 1.03, 12, 30);
+  image(barGradient, (1920 - 1805) / 2, 1000 - 6, visualTrust/100 * 1805 * 1.03, 12);
   imageMode(CENTER)
   colorMode(RGB, 255, 255, 255);
   fill(170);
@@ -405,7 +386,7 @@ class Picture {
     if (this.visible) {
       image(this.pic, this.x, this.y);
     } else {
-      console.log(this.name);
+      //console.log(this.name);
     }
     if (this.text != "") {
       text(this.text, this.x, this.y);
