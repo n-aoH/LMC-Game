@@ -221,7 +221,7 @@ function drawTrust() {
   rectMode(CORNER);
   rect((1920 - 1805) / 2, 1000 - 6, visualTrust/100 * 1805, 12, 30);
   imageMode(CORNER)
-  image(barGradient, (1920 - 1805) / 2, 1000 - 6, visualTrust/100 * 1805 + 10, 12, 30);
+  image(barGradient, (1920 - 1805) / 2, 1000 - 6, visualTrust/100 * 1805 * 1.03, 12, 30);
   imageMode(CENTER)
   colorMode(RGB, 255, 255, 255);
   fill(170);
