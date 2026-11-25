@@ -16,6 +16,9 @@ let soundEffects = [];
 async function setup() {
   intervalTimer = 0;
   trust = 5;
+  visualTrust = 0;
+  visualHue = 0;
+  currentHue = 112;
   stage = 0;
   promptSelected = 0;
   fileOpen = false;
@@ -69,6 +72,8 @@ async function setup() {
   chatBox.setName("chatBox");
   chatBox.setVisible(false);
   mainInteractionPictures.push(chatBox);
+
+  barGradient = await loadImage("guis/gradient.png");
 
   mainInteractionHeader = new Picture(await loadImage("guis/mainInteractionHeader.png"));
   mainInteractionHeader.setPosition(260, 100);
@@ -207,9 +212,18 @@ function drawPrompt(prompt) {
 }
 // Written by Noah and Marcus
 function drawTrust() {
-  fill(111, 232, 93);
+
+  visualTrust = tween(visualTrust, trust, 0.1);
+  visualHue = tween(visualHue, currentHue, 0.1);
+  currentHue = ((visualTrust / 100) * 112);
+  colorMode(HSB, 360, 100, 100);
+  fill(visualHue, 60, 91);
   rectMode(CORNER);
-  rect((1920 - 1805) / 2, 1000 - 6, trust/100 * 1805, 12, 30);
+  rect((1920 - 1805) / 2, 1000 - 6, visualTrust/100 * 1805, 12, 30);
+  imageMode(CORNER)
+  image(barGradient, (1920 - 1805) / 2, 1000 - 6, visualTrust/100 * 1805 + 10, 12, 30);
+  imageMode(CENTER)
+  colorMode(RGB, 255, 255, 255);
   fill(170);
   textSize(30);
 
