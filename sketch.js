@@ -329,10 +329,30 @@ chatv2 = [];
 chatY = 0;
 chatBasey = 220;
 
+finalChatY = 0;
+desiredChatBaseY = 0;
+
+function mouseWheel(event) {
+  console.log(desiredChatBaseY)
+  
+  desiredChatBaseY = chatBasey - (event.deltaY * 2)
+  
+  
+  return false;
+}
+
+function keyPressed() {
+  if (key === 'r') {
+    chatv2.push(new ChatText("hi", false))
+  }
+}
 function drawChats() {
+  desiredChatBaseY = constrain(desiredChatBaseY, -finalChatY + 800, 100);
+  chatBasey = tween(chatBasey, desiredChatBaseY, 0.1)
   chatY = chatBasey;
   let promptX = 565;
   let promptY = 220;
+  
 
   textAlign(LEFT, TOP)
   
@@ -340,6 +360,7 @@ function drawChats() {
     chatY += chatv2[i].draw(promptX, chatY);
     chatY += 20;
   }
+  finalChatY = chatY - chatBasey;
   textAlign(LEFT, CENTER)
 
   
