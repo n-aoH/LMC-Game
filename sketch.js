@@ -13,7 +13,15 @@ let titleScreenPictures = [];
 let mainInteractionPictures = [];
 let soundEffects = [];
 
+function clickTest() {
+  console.log("HIII")
+  fileOpen = true;
+}
 async function setup() {
+  chatv2 = [new ChatText("Hello everybody my name is markiplier", true), new ChatText("Markiplier fnaf????", false), new ChatText("In this youtube video I will play five nights a freddys", true), new ChatImage(await loadImage("guis/mainInteractionHeader.png"), true), new ChatText("Wow thats so cool", false)
+    , new ChatText("chatbbb scrub my document for me", true), new ChatButton(await loadImage("guis/fileButton.png"), true, clickTest)
+  ];
+  firstEndingFrame = true;
   intervalTimer = 0;
   trust = 5;
   visualTrust = 0;
@@ -236,8 +244,115 @@ function drawImageArray(imageArray) {
     imageArray[i].draw();
   }
 }
+
+class ChatText {
+  constructor(textString, left) {
+    this.textString = textString;
+    this.left = left;
+  }
+
+  draw(chatX, chatY) {
+
+    
+    if (this.left) {
+      fill(255, 255, 255);
+      textAlign(LEFT, TOP)
+    } else {
+      fill(255, 100, 100);
+      textAlign(RIGHT, TOP)
+      chatX += 400;
+      
+      
+    }
+
+    
+
+    
+    textSize(25);
+    textAlign(LEFT);
+    text(this.textString, chatX, chatY);
+
+    let lines = this.textString.split("\n").length;
+    return 40 * lines;
+  }
+
+
+}
+
+
+
+class ChatImage {
+  constructor(picture, left) {
+    this.picture = picture;
+    this.left = left;
+    this.y = picture.height
+  }
+
+  draw(chatX, chatY) {
+    imageMode(CORNER);
+    image(this.picture, chatX, chatY);
+    return this.y;
+  }
+}
+
+class ChatButton {
+  constructor(picture, left, onClick) {
+    this.picture = picture;
+    this.left = left;
+    this.y = picture.height;
+    this.x = picture.width;
+    this.onClick = onClick
+  }
+
+  draw(chatX, chatY) {
+    imageMode(CORNER);
+    image(this.picture, chatX, chatY);
+    if (!fileOpen && !interactionFinished && stage != -1 &&
+      mouseX > chatX && mouseX < chatX + this.x
+      && mouseY > chatY && mouseY < chatY + this.y) {
+
+      // rect(settingsX, settingsY, 250, 60);
+      
+      if (mouseIsPressed) {
+        // file opens
+        this.onClick();
+      }
+    }
+
+    return this.y;
+  }
+}
+currentChat = ["Unc", "Hello everybody my name is markiplier\nIn this youtube video\nchatgpt\nmake me a game", "I will be"];
+chatv2 = [];
+
+
+chatY = 0;
+chatBasey = 220;
+
+function drawChats() {
+  chatY = chatBasey;
+  let promptX = 565;
+  let promptY = 220;
+
+  textAlign(LEFT, TOP)
+  
+  for (let i = 0; i < chatv2.length; i++) {
+    chatY += chatv2[i].draw(promptX, chatY);
+    chatY += 20;
+  }
+  textAlign(LEFT, CENTER)
+
+  
+  getFromArray("fileButton", mainInteractionPictures).setVisible(false)
+  
+
+  
+  
+}
 // Written by Marcus
 function drawAllPrompts() {
+  drawChats();
+  return;
   //file button
   if (promptSelected == 1) {
     drawPrompt("Hello.\nPlease scrub all of the bad words from the attached file.");
@@ -320,6 +435,8 @@ function drawInteraction() {
 }
 // Written by Marcus
 function failStateSequence() {
+  
+  chatv2.push(new ChatText("Seriously? We invested all that money into this tech just for you\nto mess it up?", true))
   fill(255);
   textSize(25);
   textAlign(LEFT);
