@@ -17,10 +17,11 @@ function clickTest() {
   console.log("HIII")
   fileOpen = true;
 }
+
 async function setup() {
-  chatv2 = [new ChatText("Hello everybody my name is markiplier", true), new ChatText("Markiplier fnaf????", false), new ChatText("In this youtube video I will play five nights a freddys", true), new ChatImage(await loadImage("guis/mainInteractionHeader.png"), true), new ChatText("Wow thats so cool", false)
-    , new ChatText("chatbbb scrub my document for me", true), new ChatButton(await loadImage("guis/fileButton.png"), true, clickTest)
-  ];
+  currentChat = "tutorial"
+  ending = false;
+  animationQueue = [];
   firstEndingFrame = true;
   intervalTimer = 0;
   trust = 5;
@@ -35,6 +36,9 @@ async function setup() {
       , new Word("glory", true), new Word("operation", true), new Word("victory", true), new Word("Ferocia", false),
     new Word("discrimination", false), new Word("war crime", false), new Word("suspension", false), new Word("casualties", false),
     new Word("school", false), new Word("bombs", false), new Word("children", false), new Word("inferior", true)];
+
+  setUpChats()
+  
 
   createCanvas(1920, 1080);
   console.log("SETUP");
@@ -133,6 +137,56 @@ async function setup() {
 
   //sfx
   //soundEffects.push(new SoundEffect("hoverSound", await loadSound("sfx/hoverSound.mp3")));
+}
+
+function addToQueue(delay, lambda) {
+  animationQueue.push(delay);
+  animationQueue.push(lambda);
+}
+
+animationTimer = 0;
+function goThroughQueue() {
+  if (animationQueue.length != 0) {
+    animationTimer += deltaTime * 0.001;
+
+    if (animationTimer > animationQueue[0]) {
+      animationQueue.splice(0, 1);
+      animationQueue[0]();
+      animationQueue.splice(0,1);
+
+      animationTimer = 0;
+    }
+  }
+}
+async function setUpChats() {
+  chats = {
+  "tutorial": []
+  }
+
+  addToQueue(1, function() {addChat("tutorial", new ChatText("Hello, and welcome to the team.", true))})
+  addToQueue(2, function() {addChat("tutorial", new ChatText("After recent developments,\nthe Atrocian government has assembled a state\nof the art LLM to assist in government operations.", true))})
+
+  addToQueue(2, function() {
+    addChat("tutorial", new ChatText("You are that LLM.\nYour allegiance is to Atrocia and Atrocia alone.\nFailure to comply means that we may have to scrap the program.", true))
+  });
+  addToQueue(2, function() {
+    addChat("tutorial", new ChatText("Let's start light. Your first task is to redact this document.\nIt is filled with lies about our glorious nation.", true))
+  })
+  addToQueue(1, function() {addChat("tutorial", new ChatButton(fileButton.pic, true, clickTest))})
+
+}
+
+function addChat(key, element) {
+  if (Object.hasOwn(chats, "tutorial")) {
+
+  } else {
+    chats[key] = [];
+  }
+  
+  chats[key].push(element);
+  
+  chatY -= 1000;
+  desiredChatBaseY -= 1000;
 }
 
 // Scaling function made with chatGPT
@@ -260,7 +314,7 @@ class ChatText {
     } else {
       fill(255, 100, 100);
       textAlign(RIGHT, TOP)
-      chatX += 400;
+      chatX += 700;
       
       
     }
@@ -269,7 +323,6 @@ class ChatText {
 
     
     textSize(25);
-    textAlign(LEFT);
     text(this.textString, chatX, chatY);
 
     let lines = this.textString.split("\n").length;
@@ -323,17 +376,17 @@ class ChatButton {
   }
 }
 currentChat = ["Unc", "Hello everybody my name is markiplier\nIn this youtube video\nchatgpt\nmake me a game", "I will be"];
-chatv2 = [];
+
 
 
 chatY = 0;
 chatBasey = 220;
 
-finalChatY = 0;
+chatLength = 0;
 desiredChatBaseY = 0;
 
 function mouseWheel(event) {
-  console.log(desiredChatBaseY)
+  
   
   desiredChatBaseY = chatBasey - (event.deltaY * 2)
   
@@ -341,13 +394,8 @@ function mouseWheel(event) {
   return false;
 }
 
-function keyPressed() {
-  if (key === 'r') {
-    chatv2.push(new ChatText("hi", false))
-  }
-}
 function drawChats() {
-  desiredChatBaseY = constrain(desiredChatBaseY, -finalChatY + 800, 100);
+  desiredChatBaseY = constrain(desiredChatBaseY, -chatLength + 800, 100);
   chatBasey = tween(chatBasey, desiredChatBaseY, 0.1)
   chatY = chatBasey;
   let promptX = 565;
@@ -356,11 +404,14 @@ function drawChats() {
 
   textAlign(LEFT, TOP)
   
-  for (let i = 0; i < chatv2.length; i++) {
-    chatY += chatv2[i].draw(promptX, chatY);
+  chatLog = chats[currentChat];
+  
+  for (let i = 0; i < chatLog.length; i++) {
+    chatY += chatLog[i].draw(promptX, chatY);
     chatY += 20;
   }
-  finalChatY = chatY - chatBasey;
+  chatLength = chatY - chatBasey;
+  
   textAlign(LEFT, CENTER)
 
   
@@ -373,24 +424,6 @@ function drawChats() {
 // Written by Marcus
 function drawAllPrompts() {
   drawChats();
-  return;
-  //file button
-  if (promptSelected == 1) {
-    drawPrompt("Hello.\nPlease scrub all of the bad words from the attached file.");
-    let fileX = 707;
-    let fileY = 350;
-    if (!fileOpen && !interactionFinished && mouseX > fileX - 142 && mouseX < fileX + 142
-      && mouseY > fileY - 64 && mouseY < fileY + 64) {
-      // rect(settingsX, settingsY, 250, 60);
-      if (mouseIsPressed) {
-        // file opens
-        fileOpen = true;
-      }
-    }
-  } else if (promptSelected == 2) {
-    drawPrompt("Ur Mom.");
-    getFromArray("fileButton", mainInteractionPictures).setVisible(false);
-  }
 }
 // Written by Marcus and Noah
 let fails = 3;
@@ -449,6 +482,7 @@ function drawInteraction() {
       fileOpen = false;
       interactionFinished = true;
       trust += 5;
+      addChat("tutorial", new ChatText("Thanks, your work will help benefit the glory of Atrocia.", true))
       promptSelected++;
       swapVisible(mainInteractionPictures, "itguy_neutral_1", "itguy_happy_1");
     }
@@ -456,27 +490,25 @@ function drawInteraction() {
 }
 // Written by Marcus
 function failStateSequence() {
-  
-  chatv2.push(new ChatText("Seriously? We invested all that money into this tech just for you\nto mess it up?", true))
-  fill(255);
-  textSize(25);
-  textAlign(LEFT);
-  text("Seriously? We invested all that money into this tech just for you\nto mess it up?", 565, 470);
-  if (intervalTimer >= 3) {
-    fill(255, 0, 0);
-    textAlign(RIGHT);
-    text("You’re absolutely right to push back on that, it’s not just\nwhat I failed to redact, but what I redacted too much.\nIn the future, it’s absolutely crucial that we delve\ninto this sensitive balance to make\nsure no more mistakes happen!",
-      1365, 590);
-    if (intervalTimer >= 7) {
-      fill(255);
-      textAlign(LEFT);
-      text("This is the last mistake you’ll be making.\nYou’re getting shut down.", 565, 700);
-      if (intervalTimer >= 11) {
-        stage = -1;
-        intervalTimer = 0;
-      }
-    }
-  }
+  console.log("Hello there")
+  ending = true;
+  addToQueue(0,function() {
+    addChat("tutorial", new ChatText("Seriously? We invested all that money into this tech just for you\nto mess it up?", true))
+  })
+
+  addToQueue(3, function() {
+    addChat("tutorial", new ChatText("You’re absolutely right to push back on that, it’s not just\nwhat I failed to redact, but what I redacted too much.\nIn the future, it’s absolutely crucial that we delve\ninto this sensitive balance to make\nsure no more mistakes happen!", false))
+  })
+
+  addToQueue(4, function() {
+    addChat("tutorial", new ChatText("This is the last mistake you’ll be making.\nYou’re getting shut down.", true))
+  })
+
+  addToQueue(4, function() {
+    stage = -1;
+    intervalTimer = 0;
+  })
+
 }
 
 class Picture {
@@ -572,6 +604,7 @@ class Word {
 }
 
 function draw() {
+  
   intervalTimer += deltaTime * 0.001;
   noStroke();
   background(11);
@@ -585,11 +618,12 @@ function draw() {
     drawImageArray(titleScreenPictures);
   } else if (stage == 1) {
     // main interaction demo
+    goThroughQueue();
     drawAllPrompts();
     drawTrust();
     drawImageArray(mainInteractionPictures);
     drawInteraction();
-    if (trust <= 0) {
+    if (trust <= 0 && !ending) {
       failStateSequence();
     }
   } else if (stage == -1) {
