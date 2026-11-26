@@ -125,10 +125,21 @@ async function setup() {
   trustBar.setName("trustBar");
   mainInteractionPictures.push(trustBar);
 
-  leftPromptBarPlaceholder = new Picture(await loadImage("guis/leftPromptBarPlaceholder.png"));
-  leftPromptBarPlaceholder.setPosition(260, 300);
-  leftPromptBarPlaceholder.setName("leftPromptBarPlaceholder");
-  mainInteractionPictures.push(leftPromptBarPlaceholder);
+  // leftPromptBarPlaceholder = new Picture(await loadImage("guis/leftPromptBarPlaceholder.png"));
+  // leftPromptBarPlaceholder.setPosition(260, 300);
+  // leftPromptBarPlaceholder.setName("leftPromptBarPlaceholder");
+  // mainInteractionPictures.push(leftPromptBarPlaceholder);
+
+  leftPromptBarCurrent = new Picture(await loadImage("guis/leftPromptBarCurrent.png"));
+  leftPromptBarCurrent.setPosition(220, 220);
+  leftPromptBarCurrent.setName("leftPromptBarCurrent");
+  mainInteractionPictures.push(leftPromptBarCurrent);
+
+  leftPromptBarPast = new Picture(await loadImage("guis/leftPromptBarPast.png"));
+  leftPromptBarPast.setPosition(220, 550);
+  leftPromptBarPast.setName("leftPromptBarPast");
+  leftPromptBarPast.setVisible(false);
+  mainInteractionPictures.push(leftPromptBarPast);
 
   fileButton = new Picture(await loadImage("guis/fileButton.png"));
   fileButton.setPosition(707, 350);
