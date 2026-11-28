@@ -171,7 +171,8 @@ function goThroughQueue() {
 }
 async function setUpChats() {
   chats = {
-  "tutorial": []
+  "tutorial": [],
+  "tests": []
   }
 
   addToQueue(1, function() {addChat("tutorial", new ChatText("Hello, and welcome to the team.", true))})
@@ -185,6 +186,7 @@ async function setUpChats() {
   })
   addToQueue(1, function() {addChat("tutorial", new ChatButton(fileButton.pic, true, clickTest))})
 
+  addChat("test", new ChatText("Wenis", true));
 }
 
 function addChat(key, element) {
@@ -217,8 +219,6 @@ function scaleCanvas() {
 function windowResized() {
     scaleCanvas();
 }
-
-
 
 function tween(a, b, t) {
   return a + (b - a) * t;
@@ -254,15 +254,6 @@ function titleScreenButtons() {
       // settings menu
     }
   }
-}
-// Written by Marcus
-function drawPrompt(prompt) {
-  let promptX = 565;
-  let promptY = 220;
-  fill(255);
-  textSize(25);
-  textAlign(LEFT);
-  text(prompt, promptX, promptY);
 }
 // Written by Noah and Marcus
 function drawTrust() {
@@ -436,6 +427,10 @@ function drawChats() {
 function drawAllPrompts() {
   drawChats();
 }
+// Written by Marcus
+function drawChatArchive() {
+  
+}
 // Written by Marcus and Noah
 let fails = 3;
 function drawInteraction() {
@@ -499,7 +494,7 @@ function drawInteraction() {
     }
   }
 }
-// Written by Marcus
+// Written by Noah and Marcus
 function failStateSequence() {
   console.log("Hello there")
   ending = true;
