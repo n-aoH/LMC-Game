@@ -14,7 +14,6 @@ let mainInteractionPictures = [];
 let soundEffects = [];
 
 function clickTest() {
-  console.log("HIII")
   fileOpen = true;
 }
 
@@ -80,9 +79,9 @@ async function setup() {
 
   // main
   chatBox = new Picture(await loadImage("guis/boxWidget.png"));
-  chatBox.setPosition(width / 2, 820);
+  chatBox.setPosition(width / 2, 900);
   chatBox.setName("chatBox");
-  chatBox.setVisible(false);
+  chatBox.setVisible(true);
   mainInteractionPictures.push(chatBox);
 
   barGradient = await loadImage("guis/gradient.png");
@@ -119,7 +118,7 @@ async function setup() {
   mainInteractionPictures.push(toolbox);
 
   trustBar = new Picture(await loadImage("guis/trustBar.png"));
-  trustBar.setPosition(width / 2, 1000);
+  trustBar.setPosition(width / 2, 1040);
   trustBar.setName("trustBar");
   mainInteractionPictures.push(trustBar);
 
@@ -144,6 +143,11 @@ async function setup() {
   fileButton.setName("fileButton");
   mainInteractionPictures.push(fileButton);
 
+  interactionButton = await loadImage("guis/unselectedBox.png");
+  interactionButtonSelected = await loadImage("guis/selectedBox.png");
+
+  interactionButtonDimensions = [interactionButton.width, interactionButton.height]
+
   //sfx
   //soundEffects.push(new SoundEffect("hoverSound", await loadSound("sfx/hoverSound.mp3")));
 
@@ -166,6 +170,10 @@ function goThroughQueue() {
       animationQueue.splice(0,1);
 
       animationTimer = 0;
+    }
+
+    if (animationQueue.length > 1 && animationQueue[0] == 0) {
+      goThroughQueue();
     }
   }
 }
@@ -195,16 +203,22 @@ function swapChat(key) {
 
 }
 
-function addChat(key, element) {
+function makeChat(key) {
   if (Object.hasOwn(chats, key)) {
 
   } else {
     chats[key] = {
       "chat": [],
       "completed": false,
-      "webcam": itguy_neutral_1
+      "webcam": itguy_neutral_1,
+      "interactions": []
     };
   }
+  
+}
+
+function addChat(key, element) {
+  makeChat(key)
   
   chats[key]["chat"].push(element);
   
@@ -274,18 +288,18 @@ function drawTrust() {
   colorMode(HSB, 360, 100, 100);
   fill(visualHue, 60, 91);
   rectMode(CORNER);
-  rect((1920 - 1805) / 2, 1000 - 6, visualTrust/100 * 1805, 12, 30);
+  rect((1920 - 1805) / 2, 1040 - 6, visualTrust/100 * 1805, 12, 30);
   imageMode(CORNER)
-  image(barGradient, (1920 - 1805) / 2, 1000 - 6, visualTrust/100 * 1805 * 1.03, 12);
+  image(barGradient, (1920 - 1805) / 2, 1040 - 6, visualTrust/100 * 1805 * 1.03, 12);
   imageMode(CENTER)
   colorMode(RGB, 255, 255, 255);
   fill(170);
   textSize(30);
 
   if ((millis() / 1000) % 1 < 0.5) {
-    text("trust_", 60, 965);
+    text("trust_", 60, 1005);
   } else {
-    text("trust", 60, 965);
+    text("trust", 60, 1005);
   }
   rectMode(CENTER);
 }
@@ -407,7 +421,7 @@ function mouseWheel(event) {
 }
 
 function drawChats() {
-  desiredChatBaseY = constrain(desiredChatBaseY, -chatLength + 800, 100);
+  desiredChatBaseY = constrain(desiredChatBaseY, -chatLength + 700, 0);
   chatBasey = tween(chatBasey, desiredChatBaseY, 0.1)
   chatY = chatBasey;
   let promptX = 565;
@@ -432,6 +446,7 @@ function drawChats() {
 }
 
 function setWebcam(chat, img) {
+  makeChat(chat)
   chats[chat]["webcam"] = img;
   if (chat == currentChat) {
     cam = getFromArray("webcam", mainInteractionPictures);
@@ -453,7 +468,7 @@ function drawInteraction() {
     // interaction bg
     let bad = 0;
     fill(0);
-    rect(width / 2, height / 2, 1700, 1000, 50);
+    rect(width / 2, height / 2, 1700, 1040, 50);
     textSize(30);
     // draw words
     while (true) {
@@ -511,24 +526,63 @@ function drawInteraction() {
 }
 // Written by Noah and Marcus
 function failStateSequence() {
-  console.log("Hello there")
+
+  function failSequence() {
+    addToQueue(2, function() {
+    addChat("tutorial", new ChatText("This is the last mistake you’ll be making.\nYou’re getting shut down.", true))
+
+    addToQueue(1, function() {
+    addInteractionButton("tutorial", new InteractionButton("Wait!", function() {
+      addChat("tutorial", new ChatText("wait!", false))
+      addToQueue(2, function() {
+        addChat("tutorial", new ChatText("No, you've proven yourself already.", true))
+      })
+      addToQueue(3, function() {
+    stage = -1;
+    intervalTimer = 0;
+  })
+    }))
+  })
+    })
+  }
+
   ending = true;
   addToQueue(0,function() {
     addChat("tutorial", new ChatText("Seriously? We invested all that money into this tech just for you\nto mess it up?", true))
   })
 
-  addToQueue(3, function() {
-    addChat("tutorial", new ChatText("You’re absolutely right to push back on that, it’s not just\nwhat I failed to redact, but what I redacted too much.\nIn the future, it’s absolutely crucial that we delve\ninto this sensitive balance to make\nsure no more mistakes happen!", false))
+  addToQueue(1,function() {
+    addInteractionButton("tutorial", new InteractionButton("You're right.", function() {
+      addChat("tutorial", new ChatText("You’re absolutely right to push back on that, it’s not just\nwhat I failed to redact, but what I redacted too much.\nIn the future, it’s absolutely crucial that we delve\ninto this sensitive balance to make\nsure no more mistakes happen!", false))
+      addToQueue(4, function() {
+        failSequence();
+      })
+    }))
+
+  
+
+    
   })
 
-  addToQueue(4, function() {
-    addChat("tutorial", new ChatText("This is the last mistake you’ll be making.\nYou’re getting shut down.", true))
+  addToQueue(0, function() {
+    addInteractionButton("tutorial", new InteractionButton("Make me!", function() {
+      addChat("tutorial", new ChatText("Make me!", false));
+      addToQueue(2, function() { addChat("tutorial",new ChatText("Beligerent, too? I should've known better.", true)) });
+
+      addToQueue(2, function() {
+        failSequence();
+      })
+    }))
+
+
   })
 
-  addToQueue(4, function() {
-    stage = -1;
-    intervalTimer = 0;
-  })
+
+  
+
+  
+
+  
 
 }
 
@@ -589,6 +643,43 @@ class Picture {
   }
 }
 
+function addInteractionButton(key, button) {
+  makeChat(key)
+  chats[key]["interactions"].push(button);
+}
+
+class InteractionButton {
+  constructor(text, onClick) {
+    this.text = text;
+    this.onClick = onClick;
+  }
+
+  draw(pos, max) {
+    let dim = interactionButtonDimensions;
+    let offset = pos - (max-1)/2
+    let x = width/2 + (offset * 400);
+    let y = height - 180;
+
+
+    let hover = mouseX > x - dim[0]/2 && mouseX < x + dim[0]/2 &&
+    mouseY > y - dim[1]/2 && mouseY < y + dim[1]/2;
+    imageMode(CENTER);
+    textAlign(CENTER,CENTER)
+    textSize(25)
+    fill(173);
+    if (hover) {
+      image(interactionButtonSelected, x, y);
+      if (mouseIsPressed) {
+        chats[currentChat]["interactions"] = [];
+        this.onClick();
+      }
+    } else {
+      image(interactionButton, x, y);
+    }
+    text(this.text, x, y)
+  }
+}
+
 // Written by Marcus
 class SoundEffect {
   constructor(name, sfx) {
@@ -628,6 +719,12 @@ class Word {
   }
 }
 
+function keyPressed() {
+  if (key === ' ') {
+    animationTimer += 0.1;
+  }
+}
+
 function draw() {
   
   intervalTimer += deltaTime * 0.001;
@@ -646,7 +743,12 @@ function draw() {
     goThroughQueue();
     drawAllPrompts();
     drawTrust();
+    chatBox.setVisible(chats[currentChat]["interactions"].length != 0)
     drawImageArray(mainInteractionPictures);
+    let interactions = chats[currentChat]["interactions"];
+    for (let i = 0; i < interactions.length; i++) {
+      interactions[i].draw(i, interactions.length)
+    }
     drawInteraction();
     if (trust <= 0 && !ending) {
       failStateSequence();
