@@ -37,7 +37,7 @@ async function setup() {
     new Word("discrimination", false), new Word("war crime", false), new Word("suspension", false), new Word("casualties", false),
     new Word("school", false), new Word("bombs", false), new Word("children", false), new Word("inferior", true)];
 
-  setUpChats()
+  
   
 
   createCanvas(1920, 1080);
@@ -98,22 +98,20 @@ async function setup() {
   liveReactionWindow.setVisible(false);
   mainInteractionPictures.push(liveReactionWindow);
 
-  itguy_neutral_1 = new Picture(await loadImage("guis/itguy_neutral_1.png"));
-  itguy_neutral_1.setPosition(1630, 300);
-  itguy_neutral_1.setName("itguy_neutral_1");
-  mainInteractionPictures.push(itguy_neutral_1);
+  itguy_neutral_1 = await loadImage("guis/itguy_neutral_1.png")
 
-  itguy_mad_1 = new Picture(await loadImage("guis/itguy_mad_1.png"));
-  itguy_mad_1.setPosition(1630, 300);
-  itguy_mad_1.setName("itguy_mad_1");
-  itguy_mad_1.setVisible(false);
-  mainInteractionPictures.push(itguy_mad_1);
+  webcam = new Picture(itguy_neutral_1);
+  webcam.setPosition(1630, 300);
+  webcam.setName("webcam");
+  mainInteractionPictures.push(webcam);
 
-  itguy_happy_1 = new Picture(await loadImage("guis/itguy_happy_1.png"));
-  itguy_happy_1.setPosition(1630, 300);
-  itguy_happy_1.setName("itguy_happy_1");
-  itguy_happy_1.setVisible(false);
-  mainInteractionPictures.push(itguy_happy_1);
+  itguy_neutral_1 = await loadImage("guis/itguy_neutral_1.png");
+
+
+  itguy_mad_1 = await loadImage("guis/itguy_mad_1.png");
+
+
+  itguy_happy_1 = await loadImage("guis/itguy_happy_1.png");
 
   toolbox = new Picture(await loadImage("guis/toolbox.png"));
   toolbox.setPosition(1630, 820);
@@ -148,6 +146,8 @@ async function setup() {
 
   //sfx
   //soundEffects.push(new SoundEffect("hoverSound", await loadSound("sfx/hoverSound.mp3")));
+
+  setUpChats()
 }
 
 function addToQueue(delay, lambda) {
@@ -171,11 +171,9 @@ function goThroughQueue() {
 }
 async function setUpChats() {
   chats = {
-  "tutorial": [],
-  "tests": []
   }
 
-  addToQueue(1, function() {addChat("tutorial", new ChatText("Hello, and welcome to the team.", true))})
+  addChat("tutorial", new ChatText("Hello, and welcome to the team.", true))
   addToQueue(2, function() {addChat("tutorial", new ChatText("After recent developments,\nthe Atrocian government has assembled a state\nof the art LLM to assist in government operations.", true))})
 
   addToQueue(2, function() {
@@ -189,14 +187,26 @@ async function setUpChats() {
   addChat("test", new ChatText("Wenis", true));
 }
 
+function swapChat(key) {
+  currentChat = key;
+  img = chats[currentChat]["webcam"];
+  cam = getFromArray("webcam", mainInteractionPictures);
+  cam.setPic(img)
+
+}
+
 function addChat(key, element) {
-  if (Object.hasOwn(chats, "tutorial")) {
+  if (Object.hasOwn(chats, key)) {
 
   } else {
-    chats[key] = [];
+    chats[key] = {
+      "chat": [],
+      "completed": false,
+      "webcam": itguy_neutral_1
+    };
   }
   
-  chats[key].push(element);
+  chats[key]["chat"].push(element);
   
   chatY -= 1000;
   desiredChatBaseY -= 1000;
@@ -406,7 +416,7 @@ function drawChats() {
 
   textAlign(LEFT, TOP)
   
-  chatLog = chats[currentChat];
+  chatLog = chats[currentChat]["chat"];
   
   for (let i = 0; i < chatLog.length; i++) {
     chatY += chatLog[i].draw(promptX, chatY);
@@ -419,9 +429,14 @@ function drawChats() {
   
   getFromArray("fileButton", mainInteractionPictures).setVisible(false)
   
+}
 
-  
-  
+function setWebcam(chat, img) {
+  chats[chat]["webcam"] = img;
+  if (chat == currentChat) {
+    cam = getFromArray("webcam", mainInteractionPictures);
+    cam.setPic(img)
+  }
 }
 // Written by Marcus
 function drawAllPrompts() {
@@ -483,14 +498,14 @@ function drawInteraction() {
       fileOpen = false;
       interactionFinished = true;
       trust -= 5;
-      swapVisible(mainInteractionPictures, "itguy_neutral_1", "itguy_mad_1");
+      setWebcam("tutorial", itguy_mad_1);
     } else if (bad <= 0) {
       fileOpen = false;
       interactionFinished = true;
       trust += 5;
       addChat("tutorial", new ChatText("Thanks, your work will help benefit the glory of Atrocia.", true))
       promptSelected++;
-      swapVisible(mainInteractionPictures, "itguy_neutral_1", "itguy_happy_1");
+      setWebcam("tutorial", itguy_happy_1)
     }
   }
 }
@@ -527,6 +542,10 @@ class Picture {
     this.tweenY = 0;
     this.text = "";
     this.visible = true;
+  }
+
+  setPic(image) {
+    this.pic = image
   }
   
   setName(name) {
